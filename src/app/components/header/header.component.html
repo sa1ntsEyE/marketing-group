@@ -1,0 +1,35 @@
+<div class="wrapper--header">
+  <header>
+    <div class="header--main container">
+      <div class="header--logo">
+        <div class="header--title">
+          <a href="#" routerLink="">
+            <img src="assets/images/Leonardo_Phoenix_Design_an_emblem_featuring_the_head_of_a_fier_0%201%201.png" alt="SkillHunter logo">
+          </a>
+          JP Marketing Group
+        </div>
+        <div class="header--nav">
+          <nav>
+            <ul>
+              <li><a href="#marketingTools" (click)="closeMenu()">ABOUT THE STRATEGY</a></li>
+              <li><a href="#figures" (click)="closeMenu()">CASEY</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="burger-menu" (click)="toggleMenu()" [class.open]="menuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="fullscreen-menu" [class.open]="menuOpen">
+      <nav>
+        <ul>
+          <li><a href="#marketingTools" (click)="closeMenu()">ABOUT THE STRATEGY</a></li>
+          <li><a href="#figures" (click)="closeMenu()">CASEY</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+</div>

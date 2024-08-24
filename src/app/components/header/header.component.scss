@@ -1,0 +1,142 @@
+.wrapper--header {
+  height: 45px;
+  margin-bottom: 20px;
+
+  .header--main {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .header--logo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      .header--title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 221px;
+        gap: 12px;
+        height: 45px;
+        color: rgb(255, 255, 255);
+
+        font-family: "Manrope", sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-align: center;
+      }
+
+      .header--nav {
+        nav {
+          ul {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 40px;
+            li {
+              list-style: none;
+            }
+          }
+        }
+      }
+    }
+
+    .burger-menu {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 25px;
+      height: 20px;
+      cursor: pointer;
+      z-index: 1100; /* Увеличиваем z-index */
+
+      span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: #fff;
+        transition: all 0.3s;
+      }
+
+      &.open span:nth-child(1) {
+        transform: rotate(45deg) translate(7px, 7px);
+      }
+
+      &.open span:nth-child(2) {
+        opacity: 0;
+      }
+
+      &.open span:nth-child(3) {
+        transform: rotate(-45deg) translate(4.5px, -5px);
+      }
+    }
+  }
+
+  .fullscreen-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000; /* Уменьшаем z-index, чтобы бургер был выше */
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+
+    nav {
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+
+        li {
+          padding: 20px;
+          border-bottom: 1px solid #444;
+        }
+
+        a {
+          color: #fff;
+          text-decoration: none;
+          font-size: 18px;
+          display: block;
+        }
+      }
+    }
+
+    &.open {
+      display: flex;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header--main {
+    padding: 0 15px;
+  }
+
+  .header--nav {
+    display: none;
+  }
+
+  .burger-menu {
+    display: flex !important;
+  }
+
+  .header--logo {
+    display: flex;
+    justify-content: space-between !important;
+  }
+}

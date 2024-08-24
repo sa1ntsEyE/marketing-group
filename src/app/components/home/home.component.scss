@@ -1100,6 +1100,11 @@
   }
 
   @media (max-width: 819px) {
+    .digital--LeftSideBG--block {
+      margin-bottom: 20px;
+      width: 320px !important;
+    }
+
     .digital--main {
       display: flex;
       flex-direction: column;
@@ -1108,7 +1113,39 @@
     }
 
     .digital--LeftSide {
-      width: 375px !important;
+      width: 350px !important;
+    }
+
+    .digital--RightSide {
+      width: 350px !important;
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      }
+
+    .digital--planList--card {
+      gap: 0 !important;
+    }
+
+    .digital--planList--card--content--plan-mini {
+      width: 100% !important;
+    }
+  }
+
+  @media (max-width: 350px) {
+    .digital--LeftSideBG--block {
+      width: 320px !important;
+    }
+
+    .digital--main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .digital--LeftSide {
+      width: 320px !important;
     }
 
     .digital--RightSide {
@@ -1116,7 +1153,7 @@
       display: flex;
       justify-content: space-between;
       gap: 40px;
-      }
+    }
 
     .digital--planList--card--content--plan-mini {
       width: 100% !important;

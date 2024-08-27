@@ -98,63 +98,89 @@ export class HomeComponent implements OnInit {
     this.isOpen = new Array(this.marketingTools.length).fill(false);
   }
 
+
+  private startObserver: IntersectionObserver | undefined;
+  private endObserver: IntersectionObserver | undefined;
+  private isScrollingInBlock: boolean = false;
+  private isEndReached: boolean = false;
+
   initializeObserver() {
     if (!('IntersectionObserver' in window)) {
       console.warn('IntersectionObserver не поддерживается этим браузером.');
       return;
     }
 
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: [1.0]
-    };
-
-    this.observer = new IntersectionObserver((entries) => {
+    // Наблюдатель для отслеживания начала блока
+    this.startObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
+          this.isScrollingInBlock = true;
           const sections = document.querySelectorAll('.digital--planList--card');
           const sectionIndex = Array.from(sections).indexOf(entry.target as HTMLElement);
           if (sectionIndex !== this.currentStep) {
             this.currentStep = sectionIndex;
             this.cdr.detectChanges();
-            this.updateScrollBar();
           }
+        } else {
+          this.isScrollingInBlock = false;
+          this.updateScrollBar(false); // Сброс прогресс-бара
         }
       });
-    }, options);
+    }, { threshold: [0.1] });
 
-    document.querySelectorAll('.digital--planList--card').forEach(section => {
-      if (this.observer) {
-        this.observer.observe(section);
-      }
-    });
+    // Наблюдатель для отслеживания конца блока
+    this.endObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          this.isEndReached = true;
+        } else {
+          this.isEndReached = false;
+        }
+      });
+    }, { threshold: [0.9] });
+
+    const digitalMain = document.querySelector('.digital--main');
+    const sections = document.querySelectorAll('.digital--planList--card');
+
+    if (digitalMain) {
+      this.startObserver.observe(digitalMain);
+      this.endObserver.observe(digitalMain);
+      sections.forEach(section => {
+        if (this.startObserver) {
+          this.startObserver.observe(section);
+        }
+      });
+    }
   }
 
   @HostListener('window:scroll', ['$event'])
   onWindowScroll() {
-    this.updateScrollBar();
+    if (this.isScrollingInBlock && !this.isEndReached) {
+      this.updateScrollBar();
+    }
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event) {
-    this.updateVisibleCardsCount();
-  }
-
-  updateScrollBar() {
+  updateScrollBar(reset: boolean = false) {
+    const digitalMain = document.querySelector('.digital--main') as HTMLElement;
     const scrollElement = document.querySelector('.digital--scroll') as HTMLElement;
-    const scrollPosition = window.scrollY;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const windowHeight = window.innerHeight;
-    const maxScroll = scrollHeight - windowHeight;
 
-    if (scrollElement) {
-      const percentage = Math.min(Math.max((scrollPosition / 3620) * 100, 1), 100);
+    if (reset && scrollElement) {
+      scrollElement.style.height = '0%';
+      return;
+    }
+
+    if (digitalMain && scrollElement) {
+      const rect = digitalMain.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const scrollHeight = rect.height;
+      const scrollTop = Math.max(0, windowHeight - rect.top);
+      const scrollPosition = Math.min(scrollTop, scrollHeight);
+      const percentage = (scrollPosition / scrollHeight) * 100;
+
       scrollElement.style.height = `${percentage}%`;
       scrollElement.style.backgroundColor = 'white';
     }
   }
-
 
   categories = [
     { name: 'All categories', value: 'all' },
@@ -197,8 +223,6 @@ export class HomeComponent implements OnInit {
     { logo: 'assets/images/categories7_3.png', name: 'TechPartners', term: 'Term', termQuantity: '3 months', budget: 'Budget', price: '$2.91 trn', sales: '', salesQuantity: '',saleAmount: '', salesAmountQuantity: '',leads :'Leads', leadsQuantity : '120', roas: 'Price for ice', roasQuantity: '$24', poac: '', poacQuantity: '', category: 'b2b' },
     { logo: 'assets/images/categories8_1.png', name: 'HealthCare Pro', term: 'Term', termQuantity: '3 months', budget: 'Budget', price: '$4,600', sales: 'Sales', salesQuantity: '1,800 pcs',saleAmount: 'Conversions', salesAmountQuantity: '1,800 pcs',leads :'Conversion price', leadsQuantity : '$2.5', roas: 'ROAS', roasQuantity: '2,500%', poac: '', poacQuantity: '', category: 'medicine' },
     { logo: 'assets/images/categories9_1.png', name: 'SpringFest', term: '', termQuantity: '', budget: 'Price', price: '$3,600', sales: '', salesQuantity: '',saleAmount: 'Price for ice', salesAmountQuantity: '$12.9',leads :'Leads', leadsQuantity : '280', roas: 'Ticket price', roasQuantity: '$220', poac: 'POAC', poacQuantity: '3,5', category: 'events' },
-
-
   ];
 
   filteredCards = this.cards;
@@ -223,7 +247,7 @@ export class HomeComponent implements OnInit {
   updateVisibleCardsCount() {
     if (typeof window !== 'undefined') {
       const screenWidth = window.innerWidth;
-      if (screenWidth <= 768) {
+      if (screenWidth <= 992) {
         this.visibleCardsCount = this.cards.length;
       } else {
         this.visibleCardsCount = 6;
